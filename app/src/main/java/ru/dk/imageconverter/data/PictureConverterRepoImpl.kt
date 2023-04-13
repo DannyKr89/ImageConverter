@@ -13,7 +13,7 @@ import ru.dk.imageconverter.domain.PictureConverterRepo
 import java.io.*
 import java.util.*
 
-class PictureConverterRepoImpl : PictureConverterRepo {
+class PictureConverterRepoImpl(private val contentResolver: ContentResolver) : PictureConverterRepo {
 
     override fun convertPicture(bitmap: Bitmap) = Single.create<Bitmap> {
         val stream = ByteArrayOutputStream()
@@ -22,7 +22,7 @@ class PictureConverterRepoImpl : PictureConverterRepo {
             val convertedPicture = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
             it.onSuccess(convertedPicture)
         } else {
-            it.onError(Throwable("Ошибка"))
+            it.onError(Throwable("Ошибка конвертации"))
         }
     }.subscribeOn(Schedulers.io())
 
@@ -36,11 +36,11 @@ class PictureConverterRepoImpl : PictureConverterRepo {
             stream.close()
             it.onComplete()
         } else {
-            it.onError(Throwable("Ошибка"))
+            it.onError(Throwable("Ошибка сохранения"))
         }
     }.subscribeOn(Schedulers.io())
 
-    override fun openPicture(uri: Uri, contentResolver: ContentResolver) = Single.create<Bitmap>{
+    override fun openPicture(uri: Uri) = Single.create<Bitmap>{
         val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
         it.onSuccess(bitmap)
     }.subscribeOn(Schedulers.io())

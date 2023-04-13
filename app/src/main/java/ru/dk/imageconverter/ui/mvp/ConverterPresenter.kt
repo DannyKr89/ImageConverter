@@ -1,6 +1,5 @@
 package ru.dk.imageconverter.ui.mvp
 
-import android.content.ContentResolver
 import android.graphics.Bitmap
 import android.net.Uri
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -23,15 +22,17 @@ class ConverterPresenter(private val pictureConverter: PictureConverterRepo) {
         disposables.clear()
     }
 
-    fun takePicture(uri: Uri, contentResolver: ContentResolver) {
-        val takePicture = pictureConverter.openPicture(uri, contentResolver)
+    fun takePicture(uri: Uri) {
+        val takePicture = pictureConverter.openPicture(uri)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
                 onSuccess = {
                     picture = it
                     view?.showImage(picture!!)
                 },
-                onError = {}
+                onError = {
+                    view?.showError(it)
+                }
             )
         disposables.add(takePicture)
     }
@@ -50,8 +51,12 @@ class ConverterPresenter(private val pictureConverter: PictureConverterRepo) {
         val savePicture = pictureConverter.savePicture(picture!!)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
-                onError = {},
-                onComplete = {}
+                onError = {
+                    view?.showError(it)
+                },
+                onComplete = {
+
+                }
             )
         disposables.addAll(convertPicture, savePicture)
     }

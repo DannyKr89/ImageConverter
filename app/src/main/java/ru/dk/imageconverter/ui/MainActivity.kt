@@ -17,7 +17,7 @@ import ru.dk.imageconverter.ui.mvp.ConverterPresenter
 class MainActivity : AppCompatActivity(), ConvertView {
 
     private lateinit var binding: ActivityMainBinding
-    private val pictureConverter: PictureConverterRepo = PictureConverterRepoImpl()
+    private val pictureConverter: PictureConverterRepo = PictureConverterRepoImpl(this.contentResolver)
     private val presenter: ConverterPresenter = ConverterPresenter(pictureConverter)
     private val IMAGE_PICK_CODE = 15465
 
@@ -82,7 +82,7 @@ class MainActivity : AppCompatActivity(), ConvertView {
         if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE) {
             binding.convertPicture.isEnabled = true
             if (data?.data != null) {
-                presenter.takePicture(data.data!!, this.contentResolver)
+                presenter.takePicture(data.data!!)
             }
         }
     }
