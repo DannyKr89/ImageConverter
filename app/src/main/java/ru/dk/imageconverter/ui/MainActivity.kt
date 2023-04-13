@@ -81,9 +81,9 @@ class MainActivity : AppCompatActivity(), ConvertView {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE) {
             binding.convertPicture.isEnabled = true
-//            val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, data?.data)
-            if (data?.data != null)
-            presenter.takePicture(data.data!!,this.contentResolver)
+            if (data?.data != null) {
+                presenter.takePicture(data.data!!, this.contentResolver)
+            }
         }
     }
 
